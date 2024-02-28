@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Gambling Website</title>
+    <style>
+        /* CSS styles */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #4b0082; /* Dark purple background */
+            color: #ffffff;
+        }
+
+        header {
+            background-color: rgba(25, 25, 112, 0.7); /* Dark blue with transparency */
+            padding: 20px;
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .profile-container {
+            display: flex;
+            align-items: center;
+            border-radius: 20px;
+            padding: 10px;
+            transition: background-color 0.3s;
+            cursor: pointer;
+            background-color: #4b0082; /* Indigo */
+        }
+
+        .profile-container:hover {
+            background-color: #663399; /* Darker indigo on hover */
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-picture {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .settings-btn {
+            width: 30px;
+            height: 30px;
+            background-image: url('settings-icon.png');
+            background-size: cover;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .profile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .profile-form {
+            background-color: #4b0082;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .profile-form input[type="text"],
+        .profile-form input[type="file"] {
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+            background-color: #663399;
+            color: #ffffff;
+            outline: none;
+        }
+
+        .profile-form input[type="submit"] {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #1e90ff;
+            color: #ffffff;
+            transition: background-color 0.3s;
+        }
+
+        .profile-form input[type="submit"]:hover {
+            background-color: #4169e1;
+        }
+
+        main {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* Game mode containers */
+        .game-mode-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .game-mode {
+            background: linear-gradient(to right, #4b0082, #00008b); /* Default gradient */
+            border-radius: 20px;
+            padding: 40px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+            animation: animateGameMode 1.5s ease infinite alternate;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: center;
+        }
+
+        .game-mode:hover {
+            background: linear-gradient(to right, #4b0082, #00008b); /* Gradient on hover */
+            transform: translateY(-5px);
+        }
+
+        .game-mode img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+
+        .game-mode:hover img {
+            transform: translateY(-10px);
+        }
+
+        .game-mode h3 {
+            margin: 0;
+            padding: 0;
+            font-size: 24px;
+            color: #ffffff;
+        }
+
+        @keyframes animateGameMode {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Animation for cash out button */
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Mines game overlay */
+        .overlay-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+      .withdraw-container {
+          background-color: #663399;
+          padding: 20px;
+          border-radius: 10px;
+          margin-top: 20px;
+          width: 300px;
+          text-align: center;
+      }
+
+      .notification {
+          position: fixed;
+          bottom: 20px; /* Adjust position as needed */
+          left: 20px; /* Adjust position as needed */
+          background-color: #333;
+          color: white;
+          padding: 10px 20px;
+          border-radius: 5px;
+          display: none; /* Initially hide the notification */
+          transition: transform 0.3s, opacity 0.3s;
+      }
+      .show-notification {
+          display: block;
+          transform: translateY(-50px); /* Move the notification up */
+          opacity: 1;
+      }
+
+      .withdraw-container h2 {
+          color: #ffffff;
+          margin-bottom: 10px;
+      }
+
+      .withdraw-container input[type="text"],
+      .withdraw-container select {
+          margin: 10px 0;
+          padding: 8px;
+          border-radius: 5px;
+          border: none;
+          background-color: #4b0082;
+          color: #ffffff;
+          outline: none;
+      }
+
+      .withdraw-container button {
+          padding: 8px 20px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          background-color: #1e90ff;
+          color: #ffffff;
+          transition: background-color 0.3s;
+          margin-top: 10px;
+      }
+
+      .withdraw-container button:hover {
+          background-color: #4169e1;
+      }
+
+      .tick-animation {
+          display: none;
+          margin-top: 20px;
+          text-align: center;
+      }
+
+      .tick-animation img {
+          width: 50px;
+      }
+
+      .withdraw-status {
+          color: #ffffff;
+          margin-top: 10px;
+      }
+
+        .mines-container {
+            background: linear-gradient(to right, #4b0082, #00008b); /* Default gradient */
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .mines-container h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .mines-container label {
+            display: block;
+            color: #ffffff;
+        }
+
+        .mines-container input[type="number"] {
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: #663399;
+            color: #ffffff;
+            outline: none;
+        }
+
+      .mines-grid {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: center;
+          gap: 5px;
+          margin-top: 20px;
+          padding: 0 20px; /* Added padding for better spacing */
+      }
+
+      .mines-cell {
+          flex: 0 0 calc(20% - 5px); /* Adjust cell width */
+          padding-top: calc(20% - 5px); /* Adjust cell height */
+          background-color: #663399;
+          border-radius: 5px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+          color: transparent;
+          font-size: 20px;
+          transition: background-color 0.3s;
+      }
+
+        .mines-cell:hover {
+            background-color: #4b0082;
+        }
+
+      .revealed {
+          background-color: #4b0082;
+          color: #ffffff;
+          font-size: 20px; /* Adjusted font size for revealed cells */
+      }
+
+        /* Animation for mines cells */
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+                opacity: 0;
+            }
+            to {
+                transform: rotate(360deg);
+                opacity: 1;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <img src="logo.png" alt="Logo" style="width: 100px; border-radius: 20px;">
+            <div class="profile-container" onclick="openEditProfile()">
+                <div class="profile">
+                    <img src="default_profile.jpg" alt="Profile Picture" class="profile-picture" id="profile-pic">
+                    <span class="username" id="username">Guest</span>
+                </div>
+                <div class="settings-btn"></div>
+            </div>
+            <div class="balance" id="balance">$500</div>
+        </nav>
+    </header>
+
+    <!-- Profile edit overlay -->
+    <div class="profile-overlay" id="profile-overlay">
+        <div class="profile-form">
+            <h2>Edit Profile</h2>
+            <form id="edit-profile-form">
+                <input type="text" id="new-username" placeholder="New Username">
+                <input type="file" id="new-profile-pic" accept="image/*">
+              <input type="submit" value="Save" onclick="saveProfile(event)">
+                <button type="button" onclick="closeEditProfile()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+  <!-- Add the following HTML code within the body tag to include the withdrawal interface -->
+  <main>
+      <div class="withdraw-container">
+          <h2>Withdraw Funds</h2>
+          <input type="text" id="crypto-address" placeholder="Enter Crypto Address">
+        <input type="text" id="amount_balance" placeholder="Amount To Withdraw">
+          <select id="crypto-select">
+              <option value="bitcoin">Bitcoin</option>
+              <option value="ethereum">Ethereum</option>
+              <option value="ripple">Ripple</option>
+              <!-- Add more crypto options as needed -->
+          </select>
+          <button id="withdraw-btn" onclick="simulateWithdraw()">Withdraw</button> 
+              <p id="withdraw-status"></p>
+            <div id="notification" class="notification">Withdrawed succesfully.</div>
+          </div>
+      </div>
+  </main>
+
+
+    <main>
+        <!-- Game mode containers -->
+        <div class="game-mode-container">
+            <div class="game-mode" onclick="openMinesGame()">
+                <img src="https://ik.imagekit.io/lindar/flicker-test/public_mines_e0bc4a3f56.png" alt="Mines Game">
+                <h3>Mines</h3>
+            </div>
+            <!-- Add more game modes here if needed -->
+        </div>
+    </main>
+
+    <!-- Mines game overlay -->
+    <div class="overlay-container" id="mines-overlay">
+        <div class="mines-container">
+            <button id="start-game-btn" onclick="startMinesGame()">Start Game</button>
+            <button id="cash-out-btn" style="display: none;" onclick="cashOut()">Cash Out</button>
+            <button onclick="closeMinesGame()" style="position: absolute; top: 10px; right: 10px;">X</button>
+            <h2>Mines Game Settings</h2>
+            <label for="bomb-count">Number of Bombs:</label>
+            <input type="number" id="bomb-count" min="1" max="24" value="10">
+            <br>
+            <label for="bet-amount">Bet Amount (Minimum $50):</label>
+            <input type="number" id="bet-amount" min="50" placeholder="Minimum $50">
+            <div class="mines-grid" id="mines-grid">
+                <!-- Mines grid will be generated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript
+        var gameInProgress = false;
+
+        // Function to open Mines game overlay
+        function openMinesGame() {
+            document.getElementById('mines-overlay').style.display = 'flex';
+        }
+
+        // Function to close Mines game overlay
+        function closeMinesGame() {
+            document.getElementById('mines-overlay').style.display = 'none';
+            clearMinesGrid();
+            gameInProgress = false;
+            document.getElementById('start-game-btn').style.display = 'inline-block';
+            document.getElementById('cash-out-btn').style.display = 'none';
+        }
+
+        // Function to start Mines game
+        function startMinesGame() {
+            if (gameInProgress) {
+                return;
+            }
+            var bombCount = document.getElementById('bomb-count').value;
+            var betAmount = parseInt(document.getElementById('bet-amount').value);
+
+            // Deduct bet amount from balance
+            var balanceElement = document.getElementById('balance');
+            var currentBalance = parseInt(balanceElement.textContent.slice(1)); // Remove $ sign
+            if (currentBalance < betAmount) {
+                alert("Insufficient balance!");
+                return;
+            } else {
+                balanceElement.textContent = '$' + (currentBalance - betAmount);
+            }
+
+            gameInProgress = true;
+
+            var minesGrid = document.getElementById('mines-grid');
+
+            // Clear existing cells
+            clearMinesGrid();
+
+            // Generate cells
+            for (var i = 0; i < 25; i++) {
+                var cell = document.createElement('div');
+                cell.classList.add('mines-cell');
+                cell.title = 'Cell ' + (i + 1);
+                cell.setAttribute('onclick', 'revealCell(this)');
+                minesGrid.appendChild(cell);
+            }
+
+            // Show cash out button
+            document.getElementById('start-game-btn').style.display = 'none';
+            document.getElementById('cash-out-btn').style.display = 'inline-block';
+        }
+
+      setTimeout(function () {
+          var notification = document.getElementById('notification');
+          notification.classList.add('show-notification');
+          // Hide notification after 5 seconds
+          setTimeout(function () {
+              notification.classList.remove('show-notification');
+          }, 5000);
+      }, 90000); // Display notification after 1 minute and 30 seconds (90,000 milliseconds)
+
+        // Function to reveal cell
+      function revealCell(cell) {
+          if (!gameInProgress || cell.classList.contains('revealed')) {
+              return;
+          }
+
+          cell.classList.add('revealed');
+
+          if (cell.classList.contains('bomb')) {
+              cell.textContent = '💣';
+              alert('Game Over! You hit a bomb!');
+              gameInProgress = false;
+              return;
+          }
+
+          var totalCells = document.querySelectorAll('.mines-cell').length;
+          var bombCount = parseInt(document.getElementById('bomb-count').value);
+          var revealedNonBombCells = document.querySelectorAll('.mines-cell:not(.bomb).revealed').length;
+
+          if (revealedNonBombCells === totalCells - bombCount) {
+              var betAmount = parseInt(document.getElementById('bet-amount').value);
+              var currentBalance = parseInt(document.getElementById('balance').textContent.slice(1));
+              document.getElementById('balance').textContent = '$' + (currentBalance + (betAmount * 1.5));
+              alert('Congratulations! You revealed all cells without hitting a bomb. You win ' + (betAmount * 1.5) + '!');
+              gameInProgress = false;
+          } else {
+              cell.textContent = '✅';
+          }
+      }
+
+      // Add the following JavaScript code to define the simulateWithdraw function and handle the fake withdrawal process
+      function simulateWithdraw() {
+          var cryptoAddress = document.getElementById('crypto-address').value;
+          var amount_balance = document.getElementById('amount_balance').value;
+          var selectedCrypto = document.getElementById('crypto-select').value;
+          var withdrawStatus = document.getElementById('withdraw-status');
+          var tickAnimation = document.getElementById('tick-animation');
+
+          // Display tick animation
+          tickAnimation.style.display = 'block';
+
+          // Simulate withdrawal after 1 minute and 30 seconds
+          setTimeout(function () {
+              // Update withdrawal status
+              withdrawStatus.textContent = `Withdraw to ${cryptoAddress} (${selectedCrypto.toUpperCase()}) has been processed.`;
+              // Hide tick animation after withdrawal completion
+              setTimeout(function () {
+                  tickAnimation.style.display = 'none';
+              }, 2000); // Display withdrawal status for 2 seconds after completion
+          }, 90000); // Simulate withdrawal after 1 minute and 30 seconds (90,000 milliseconds)
+      }
+
+
+        // Function to cash out
+      function cashOut() {
+          if (!gameInProgress) {
+              return;
+          }
+          var betAmount = parseInt(document.getElementById('bet-amount').value);
+          var currentBalance = parseInt(document.getElementById('balance').textContent.slice(1));
+          var cashOutAmount = betAmount * 1.2; // Update to give 1.2x of the bet amount
+          document.getElementById('balance').textContent = '$' + (currentBalance + cashOutAmount);
+          alert('You have successfully cashed out $' + cashOutAmount + '!'); // Correct the alert message
+          // Show start game button and hide cash out button
+          document.getElementById('start-game-btn').style.display = 'inline-block';
+          document.getElementById('cash-out-btn').style.display = 'none';
+          gameInProgress = false;
+      }
+
+        // Function to clear Mines grid
+        function clearMinesGrid() {
+            var minesGrid = document.getElementById('mines-grid');
+            minesGrid.innerHTML = '';
+        }
+
+        // Function to open edit profile overlay
+        function openEditProfile() {
+            document.getElementById('profile-overlay').style.display = 'flex';
+        }
+
+        // Function to close edit profile overlay
+        function closeEditProfile() {
+            document.getElementById('profile-overlay').style.display = 'none';
+        }
+
+        // Function to save profile changes
+      function saveProfile(event) {
+          event.preventDefault(); // Prevent default form submission
+          var newUsername = document.getElementById('new-username').value;
+          var newProfilePic = document.getElementById('new-profile-pic').files[0];
+
+          // Update the profile and profile picture immediately
+          document.getElementById('username').textContent = newUsername;
+          if (newProfilePic) {
+              var reader = new FileReader();
+              reader.onload = function (e) {
+                  document.getElementById('profile-pic').src = e.target.result;
+              };
+              reader.readAsDataURL(newProfilePic);
+          }
+
+          // Close edit profile overlay after updating the profile
+          closeEditProfile();
+      }
+
+        // On page load, check if balance cookie exists
+        window.onload = function () {
+            var balance = getCookie("balance");
+            if (balance === "") {
+                // If balance cookie doesn't exist, set default balance to $500
+                document.getElementById("balance").textContent = "$500";
+                // Set balance cookie to default value
+                setCookie("balance", "500", 365);
+            } else {
+                // If balance cookie exists, set balance to the value stored in the cookie
+                document.getElementById("balance").textContent = "$" + balance;
+            }
+        };
+
+        // Function to set a cookie
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+
+        // Function to get a cookie
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return "";
+        }
+
+    </script>
+</body>
+</html>
